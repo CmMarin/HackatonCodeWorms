@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Notes Dashboard</title>
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            --bg-dark: #1a1a1a;
+            --bg-medium: #262626;
+            --accent-blue: #2196F3;
+            --text-primary: #e0e0e0;
+            --text-secondary: #888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            height: 100vh;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 100%;
+        }
+
+        .sidebar {
+            background: var(--bg-medium);
+            padding: 1.5rem;
+            border-right: 1px solid #333;
+        }
+
+        .sidebar-header {
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .category-item {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .category-item:hover {
+            background: #333;
+        }
+
+        .category-item.active {
+            background: var(--accent-blue);
+            font-weight: 500;
+        }
+
+        .main-content {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .note-card {
+            background: var(--bg-medium);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-blue);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .note-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .note-content {
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .note-meta {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .reminder-panel {
+            background: #333;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+
+        .reminder-item {
+            padding: 1rem;
+            background: var(--bg-medium);
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .nav-btn:hover {
+            opacity: 0.9;
+        }
+
+        .small-btn {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Smart Notes</h2>
+            </div>
+            <div class="category-item active">📋 All Notes</div>
+            <div class="category-item">✅ Tasks</div>
+            <div class="category-item">🎬 Movies/TV</div>
+            <div class="category-item">🎓 University</div>
+            <div class="category-item">💼 Personal</div>
+            <div class="reminder-panel">
+                <h3>🔔 Active Reminders</h3>
+                <div class="reminder-item">
+                    <span>Watch Invincible Ep.3</span>
+                    <button class="small-btn">✔️</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>All Notes</h1>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="nav-btn" id="newNoteBtn">+ New Note</button>
+                </div>
+            </div>
+
+            <div class="notes-grid" id="notesGrid">
+                <div class="note-card">
+                    <div class="note-content">Finish project proposal by Friday</div>
+                    <div class="note-meta">
+                        <span>✅ Tasks</span>
+                        <span>2h ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('newNoteBtn').addEventListener('click', () => {
+          window.electronAPI.navigateTo('input')
+        })
+        
+        window.electronAPI.receive('new-note', (noteData) => {
+          const notesGrid = document.getElementById('notesGrid')
+          const noteCard = document.createElement('div')
+          noteCard.className = 'note-card'
+          noteCard.innerHTML = `
+            <div class="note-content">${noteData.content}</div>
+            <div class="note-meta">
+              <span>${noteData.category}</span>
+              <span>Just now</span>
+            </div>
+          `
+          notesGrid.prepend(noteCard)
+        })
+      </script>
+</body>
+</html>

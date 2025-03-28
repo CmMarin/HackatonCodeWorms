@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Note</title>
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            --bg-dark: #1a1a1a;
+            --bg-medium: #262626;
+            --accent-blue: #2196F3;
+            --text-primary: #e0e0e0;
+        }
+
+        body {
+            background: var(--bg-dark);
+            margin: 0;
+            padding: 2rem;
+            height: 100vh;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .input-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        background: var(--bg-medium);
+        padding: 1rem;
+        border-radius: 12px;
+        }
+
+        .input-field {
+            background: var(--bg-medium);
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            min-height: 150px;
+            resize: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .input-btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .input-btn:hover {
+            opacity: 0.9;
+        }
+
+        .back-btn {
+        background: var(--accent-blue) !important;
+        color: white !important;
+        border-radius: 8px;
+    }
+    </style>
+</head>
+<body>
+    <div class="input-container">
+        <div class="input-header">
+            <button class="input-btn back-btn" id="backBtn">← Back</button>
+            <h2 style="color: var(--accent-blue); margin: 0;">New Note</h2>
+            <div style="width: 88px"><!-- Spacer for alignment --></div>
+        </div>
+        <textarea 
+            class="input-field" 
+            placeholder="Speak or type your note..."
+            id="noteInput"
+        ></textarea>
+        <div class="button-group">
+            <button class="input-btn" id="saveBtn">💾 Save Note</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('backBtn').addEventListener('click', () => {
+          window.electronAPI.navigateTo('index')
+        })
+      
+        document.getElementById('saveBtn').addEventListener('click', () => {
+          const content = document.getElementById('noteInput').value.trim()
+          if(content) {
+            window.electronAPI.sendNote({
+              content: content,
+              category: 'General',
+              timestamp: new Date().toISOString()
+            })
+            window.electronAPI.navigateTo('index')
+          }
+        })
+      </script>
+</body>
+</html>
